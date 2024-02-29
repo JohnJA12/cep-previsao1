@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsão do Tempo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+
+    <script>
+      async function getAddressByCep(){
+       const cep = document.getElementById('cep').value;
+
+        try{const response =  await fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          const data =  await response.json();    
+          console.log(data);
+          document.getElementById('cep-nome').value = data.logradouro;
+          document.getElementById('cep-bairro').value = data.bairro;
+          document.getElementById('cep-localidade').value = data.uf;
+        }
+        
+        catch (error){
+            alert(error.message)
+        }
+      }
+
+
+      async function getPrevisao() {
+  const lat = document.getElementById('Latitude').value;
+  const lon = document.getElementById('Longitude').value;
+
+  let respo  = document.getElementById("respo")
+
+  try {
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m`);
+    const data = await response.json();
+    
+    respo.innerHTML = "";
+    for (let index = 0; index < data.hourly.temperature_2m.length; index++){
+        respo.innerHTML += `<div>${data.hourly.temperature_2m[index]} °C </div>` 
+        
+       
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+}
+// atualização
+const enviarDados = () => {
+  getPrevisao()
+  getAddressByCep()
+}
+
+    
+    </script>
+</head>
+
+
+<body>
+  <header>
+  <div>
+    <h1 class="tela-aba">DncWeather </h1>
+  </div>
+<div><ul>
+    <li class="lista" >Endereços </li>
+    <li class="lista"> Previsão do tempo</li>
+  </ul></div>
+
+</header>
+
+
+  <main>
+
+  <div id="menu-descricao">   
+   
+    <h1 id="titulo">
+        Descubra Mais com Precisão: <br>
+         Previsões do Tempo e endereços   <br>
+         em tempo real.
+    </h1>
+    
+    <div>
+      <img src="nuvem.svg" alt="" id="imagem">
+    </div>
+  </div>
+
+  <div id="formulario">
+
+      <form id="form">
+
+        <div class="entrada">
+        <label for="nome">
+        Primeiro Nome:           
+        </label> 
+        <input type="text" id="nome" placeholder="Insira seu primeiro nome:">
+       
+      </div>
+        
+        <div class="entrada">
+        <label for="e-mail">
+            E-mail: 
+             </label> 
+             <input type="email" id="e-mail" placeholder="Insira seu e-mail" >
+            
+            </div>
+
+          <div class="entrada">
+        <label for="cep">
+            Digite o CEP:
+            </label> 
+          <input type="number"
+            id="cep"
+            placeholder="Insira o CEP" 
+            class="form-control"
+            value="">
+
+        </div>
+
+
+        <div class="lat-lon">
+        <label for="Latitude">
+            Digite a latitude e longitude para saber a previsão: 
+          </label>
+            <div class="inputs">
+              <input type="number" id="Latitude" placeholder="Latitude" > 
+              <input type="number" id="Longitude" placeholder="Longitude" >
+              </div>
+        </div>
+
+
+        <button
+        type="button"
+        onclick="enviarDados()">
+          Acessar
+        </button>
+        </form>
+        </div>
+
+  <div class="CP">
+
+    <h1 id="cep-busca"> 
+      Resultado da busca por CEP:
+    </h1>
+    <div>
+     <img id="localizacao" src="localização.svg" alt="">
+    </div>
+  </div>
+
+
+  <div class="resultados">
+    <ul>
+      <li>Logradouro/nome</li>
+      <li>Bairro/Distrito</li>
+      <li>Localidade/UF</li>
+    </ul>
+  </div>
+
+  <div class="resultados2">
+    <ul>
+      <div>
+      <label for="cep-nome"> </label>
+      <input type="text" readonly class="form-control" id="cep-nome">
+    </div>
+    <div>
+      <label for="cep-bairro"> </label>
+      <input type="text" readonly class="form-control" id="cep-bairro">
+    </div>
+    <div>
+      <label for="cep-localidade"> </label>
+      <input type="text" readonly class="form-control" id="cep-localidade">
+    </div>
+      
+    </ul>
+  </div>
+
+  <div class="previsao">
+    <h1>
+      Previsão do tempo na região:
+    </h1>
+
+    <div>
+      <img src="previsao.svg" alt="">
+    </div>
+
+  </div>
+
+  <div>
+    <div class="resultados-previsao">
+      <label for="previsao"> 
+        <h2>Previsão de acordo com a região : </h2>
+      </label>
+      <div id="respo"></div>
+    </div>
+    
+  </div>
+
+<footer>
+    <div class="rodape">
+      <ul>
+        <li>
+      Termos de Uso | Política de Privacidade
+      </li>
+    </ul>
+    </div>
+
+  </footer>
+
+  </main>
+
+
+</body>
+
+
+</html>
